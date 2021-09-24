@@ -16,7 +16,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotRequestHandlers],
-	
+
 	WolframLanguageForJupyter`Private`$GotRequestHandlers = True;
 
 (************************************
@@ -157,7 +157,7 @@ If[
 
 			(* evaluate the input, and store the total result in totalResult *)
 			totalResult = simulatedEvaluate[loopState["frameAssoc"]["content"]["code"]];
-			
+
 			(* restore printFunction to False *)
 			loopState["printFunction"] = False;
 
@@ -168,7 +168,7 @@ If[
 			loopState["replyMsgType"] = "execute_reply";
 
 			(* set the content of the reply to information about WolframLanguageForJupyter's execution of the input *)
-			loopState["replyContent"] = 
+			loopState["replyContent"] =
 				ExportString[
 					Association[
 						"status" -> "ok",
@@ -227,7 +227,7 @@ If[
 						(* preformatted *)
 						"<pre style=\"",
 						(* the color of the text should be red, and should use Courier *)
-						StringJoin[{"&#", ToString[#1], ";"} & /@ ToCharacterCode["color:red; font-family: \"Courier New\",Courier,monospace;", "UTF-8"]], 
+						StringJoin[{"&#", ToString[#1], ";"} & /@ ToCharacterCode["color:red; font-family: \"Courier New\",Courier,monospace;", "UTF-8"]],
 						(* end pre tag *)
 						"\">",
 						(* the generated messages  *)
@@ -241,7 +241,7 @@ If[
 			If[
 				(* check if the input was wrapped with Interact,
 					which is used when the output should be displayed as an embedded cloud object *)
-				TrueQ[totalResult["InteractStatus"]] && 
+				TrueQ[totalResult["InteractStatus"]] &&
 					(* check if we are logged into the Cloud *)
 					$CloudConnected,
 				(* prepare the content for a reply message frame to be sent on the IO Publish socket *)
@@ -256,7 +256,7 @@ If[
 									"text/html" ->
 										StringJoin[
 											(* display any generated messages as inlined PNG images encoded in base64 *)
-											"<div><img alt=\"\" src=\"data:image/png;base64,", 
+											"<div><img alt=\"\" src=\"data:image/png;base64,",
 											(* rasterize the generated messages in a dark red color, and convert the resulting image to base64*)
 											BaseEncode[ExportByteArray[Rasterize[Style[totalResult["GeneratedMessages"], Darker[Red]]], "PNG"]],
 											(* end image element *)
@@ -292,17 +292,12 @@ If[
 							{
 								(* generate HTML for the results and messages *)
 								"text/html" ->
-									If[
-										loopState["isCompleteRequestSent"],
-										(* if an is_complete_request has been sent, assume jupyter-console is running the kernel,
-											and do not generate HTML *)
-										"",
-										(* otherwise, output the results in a grid *)
-										If[
-											Length[totalResult["EvaluationResult"]] > 1,
-											StringJoin[
-												(* add grid style *)
-												"<style>
+										     (* otherwise, output the results in a grid *)
+										     If[
+											         Length[totalResult["EvaluationResult"]] > 1,
+											         StringJoin[
+												             (* add grid style *)
+												             "<style>
 													.grid-container {
 														display: inline-grid;
 														grid-template-columns: auto;
@@ -310,42 +305,42 @@ If[
 												</style>
 
 												<div>",
-												(* display error message *)
-												errorMessage,
-												(* start the grid *)
-												"<div class=\"grid-container\">",
-												(* display the output lines *)
-												Table[
-													{
-														(* start the grid item *)
-														"<div class=\"grid-item\">",
-														(* show the output line *)
-														toOut[totalResult["EvaluationResult"][[outIndex]]],
-														(* end the grid item *)
-														"</div>"
-													},
-													{outIndex, 1, Length[totalResult["EvaluationResult"]]}
-												],
-												(* end the element *)
-												"</div></div>"
-											],
-											StringJoin[
-												(* start the element *)
-												"<div>",
-												(* display error message *)
-												errorMessage,
-												(* if there are messages, but no results, do not display a result *)
-												If[
-													Length[totalResult["EvaluationResult"]] == 0,
-													"",
-													(* otherwise, display a result *)
-													toOut[First[totalResult["EvaluationResult"]]]
-												],
-												(* end the element *)
-												"</div>"
-											]
-										]
-									],
+												             (* display error message *)
+												             errorMessage,
+												             (* start the grid *)
+												             "<div class=\"grid-container\">",
+												             (* display the output lines *)
+												             Table[
+													                 {
+														                     (* start the grid item *)
+														                     "<div class=\"grid-item\">",
+														                     (* show the output line *)
+														                     toOut[totalResult["EvaluationResult"][[outIndex]]],
+														                     (* end the grid item *)
+														                     "</div>"
+													                 },
+													                 {outIndex, 1, Length[totalResult["EvaluationResult"]]}
+												             ],
+												             (* end the element *)
+												             "</div></div>"
+											         ],
+											         StringJoin[
+												             (* start the element *)
+												             "<div>",
+												             (* display error message *)
+												             errorMessage,
+												             (* if there are messages, but no results, do not display a result *)
+												             If[
+													                 Length[totalResult["EvaluationResult"]] == 0,
+													                 "",
+													                 (* otherwise, display a result *)
+													                 toOut[First[totalResult["EvaluationResult"]]]
+												             ],
+												             (* end the element *)
+												             "</div>"
+											         ]
+										     ]
+							  ,
 								(* provide, as a backup, plain text for the results *)
 								"text/plain" ->
 									StringJoin[
@@ -366,9 +361,9 @@ If[
 					"Compact" -> True
 				];
 			];
-			
+
 			(* create frame from ioPubReplyContent *)
-			loopState["ioPubReplyFrame"] = 
+			loopState["ioPubReplyFrame"] =
 				createReplyFrame[
 					(* use the current source frame *)
 					loopState["frameAssoc"],
@@ -407,7 +402,7 @@ If[
 			(* set the appropriate reply type *)
 			loopState["replyMsgType"] = "complete_reply";
 			(* set the content of the reply to a list of rewrites for any named characters in the code string *)
-			loopState["replyContent"] = 
+			loopState["replyContent"] =
 				ByteArrayToString[
 					ExportByteArray[
 						Association[
@@ -425,7 +420,7 @@ If[
 							"cursor_end" -> StringLength[codeStr],
 							"metadata" -> {},
 							"status" -> "ok"
-						], 
+						],
 						"JSON",
 						"Compact" -> True
 					]
